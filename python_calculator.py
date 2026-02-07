@@ -1,3 +1,14 @@
 a = int(input("Enter first number: "))
+c = input("enter the operator") 
 b = int(input("Enter second number: "))
-print("Sum =", a + b)
+
+if c == '+' :
+    print(a+b)
+elif c == '-':
+    print(a-b)
+elif c == '*':
+    print(a*b)
+elif c == '/':
+    print(a/b)
+else :
+    print("invalid input")
