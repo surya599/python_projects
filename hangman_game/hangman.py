@@ -2,7 +2,7 @@ import random
 import hangman_words
 from hangman_art import stages
 from hangman_art import logo
-wordlist = ['aardvark','baboon','camel']
+
 correctletters = []
 lives = 7
 print(logo)
