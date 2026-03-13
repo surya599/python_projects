@@ -3,7 +3,7 @@ from tkinter import *
 
 def miles_km():
     miles = float(miles_input.get())
-    km = miles*1.609
+    km = round(miles*1.609)
     kilometerresultlabel.config(text=f"{km}")
 window = Tk()
 window.config(padx=20,pady=20)
