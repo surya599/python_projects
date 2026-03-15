@@ -2,6 +2,8 @@ from tkinter import *
 from tkinter import messagebox
 import random
 import pyperclip
+import json
+
 FONT_NAME = "Courier"
 YELLOW = "#f7f5dd"
 
@@ -11,20 +13,49 @@ window.title("Password Manager")
 window.config(bg=YELLOW)
 photo = PhotoImage(file ="logo.png")
 
+def find_password():
+    website = website_input.get()
+    try:
+        with open("data.json") as data_file:
+            data = json.load(data_file)
+    except (FileNotFoundError,json.JSONDecodeError):
+        messagebox.showinfo(title="Error",message="No Data found")
+    else:
+        if website in data:
+            email = data[website]["email"]
+            password = data[website]["password"]
+            messagebox.showinfo(title=website,message= f"email : {email}\n password: {password}")
+
 def add_data():
     website = website_input.get()
     email = email_input.get()
     password = password_input.get()
+
+    new_data = {
+        website:{
+            "email": email,
+            "password": password
+        }
+    }
     if len(website) == 0 or len(email) == 0 or len(password) == 0:
         messagebox.showinfo(title="Oops",message="You can't leave the fields empty")
     else:
         is_ok = messagebox.askokcancel(title= website,message= f"these are your credentials email : {email}\n password : {password}")
         
         if is_ok:
-            with open("data.txt",mode='a') as file:
-                file.write(f"{website} | {email} | {password}\n")
-            website_input.delete(0,END)
-            password_input.delete(0,END)
+            try:
+                with open("data.json",mode='r') as data_file:
+                    data = json.load(data_file)
+            except (FileNotFoundError,json.JSONDecodeError):
+                with open("data.json",mode='w') as data_file:
+                    json.dump(new_data,data_file,indent=4)
+            else:
+                data.update(new_data)
+                with open("data.json",mode='w') as data_file:
+                    json.dump(data,data_file,indent=4)
+            finally:
+                website_input.delete(0,END)
+                password_input.delete(0,END)
 
 def generate_password():
     lower_case = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i','j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r','s', 't', 'u', 'v', 'w', 'x', 'y', 'z']
@@ -65,9 +96,12 @@ canvas.grid(column=1,row = 0)
 website_label = Label(text="Website",bg=YELLOW,font=(FONT_NAME,15,"normal"))
 website_label.grid(column=0,row=1)
 
-website_input = Entry(width=75)
-website_input.grid(column=1,row=1,columnspan=2)
+website_input = Entry(width=35)
+website_input.grid(column=1,row=1)
 website_input.focus()
+
+search_button = Button(text="search",bg=YELLOW,font=(FONT_NAME,15,"normal"),width=17,command = find_password)
+search_button.grid(column=2,row=1)
 
 email_label = Label(text="Email/Username",bg=YELLOW,font=(FONT_NAME,15,"normal"))
 email_label.grid(column=0,row=2)
